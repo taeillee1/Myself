@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Bootstrap Example</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        p{
+            color: red;
+        }
+        input[type="text"]:disabled {
+            background: #e4f3ff;
+            border: 1px solid #9abbff;
+        }
+        textarea:disabled {
+            background: #e4f3ff;
+            border: 1px solid #9abbff;
+        }
+    </style>
+
+    <script th:inline="javascript">
+        $(document).ready(function(){
+            let errorMessage = [[${errorMessage}]];
+            if(errorMessage != null){
+                alert(errorMessage);
+            }
+        });
+        function del() {
+            var chk = confirm("정말 삭제하시겠습니까?");
+            if (chk) {
+
+            }
+        }
+    </script>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-md bg-dark navbar-dark">
+    <a class="navbar-brand" href="/">Navbar</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="collapsibleNavbar">
+        <ul class="navbar-nav">
+            <li class="nav-item" sec:authorize="isAnonymous()">
+                <a class="nav-link" th:href="@{/login}">로그인</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/board}">게시판</a>
+            </li>
+        </ul>
+    </div>
+    <div sec:authorize="isAuthenticated()">
+        <span sec:authentication="name" class="text-white">사용자</span>
+        <span sec:authentication="principal.authorities" class="text-white">권한</span>
+    </div>
+    <form class="form-inline my-2 my-lg-0" th:action="@{/logout}" method="POST" sec:authorize="isAuthenticated()">
+        <button class="btn btn-secondary my-2 my-sm-0" type="submit">Logout</button>
+    </form>
+</nav>
+<br>
+<div class="container">
+    <h2>게시판</h2>
+    <br>
+    <form action="#" th:action="@{/board/form}" th:object="${board}" method="post">
+        <input type="hidden" th:field="*{id}"> <!-- 이걸안쓰면 수정이 안되고 계속해서 새로운곳에다가 생성시킴 -->
+        <div class="form-group">
+            <label for="title"><h4>작성자</h4></label>
+            <input type="text" class="form-control" id="writer" th:field="*{user.username}" disabled style="width: auto; display:inline-block;">
+        </div>
+        <div class="form-group">
+            <label for="title"><h4>제목</h4></label>
+            <input type="text" class="form-control" id="title" th:field="*{title}" disabled>
+        </div>
+        <div class="form-group">
+            <label for="content"><h4>내용</h4></label>
+            <textarea class="form-control" id="content" rows="13" th:field="*{content}" disabled style="background: #e4f3ff;"></textarea>
+        </div>
+
+        <div class="text-left">
+            <a type="button" class="btn btn-primary" th:href="@{/board}">목록</a>
+        </div>
+        <div class="text-right">
+            <div th:if="${#authentication.name} == *{user.username}">
+                <a type="button" class="btn btn-primary" th:href="@{'/modify/'+${board.id}}">수정</a>
+                <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">삭제</a>
+<!--                <a type="button" class="btn btn-primary" onclick="del()">삭제</a>-->
+            </div>
+
+        </div>
+        <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">게시물 삭제</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        게시물을 정말 삭제하시겠습니까?
+                    </div>
+                    <div class="modal-footer">
+                        <a type="button" class="btn btn-primary" th:href="@{'/delete/'+${board.id}}">삭제하기</a>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">취소하기</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+</div>
+</body>
+</html>
