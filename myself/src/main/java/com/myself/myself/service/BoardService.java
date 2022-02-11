@@ -36,6 +36,7 @@ public class BoardService {
         return board;
     }
 
+
     @Transactional
     public void deleteItem(BoardFormDto boardFormDto){
         Board board = boardRepository.findById(boardFormDto.getId()).orElseThrow(null);

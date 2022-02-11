@@ -15,7 +15,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
@@ -88,18 +87,16 @@ public class BoardController {
     public String editBoard(@PathVariable Long id,Model model){
         Board board = boardRepository.findById(id).orElse(null);
         model.addAttribute("editBoard",board);
+        model.addAttribute("boardFormDto",new BoardFormDto());
         return "modify";
     }
 
     @PostMapping("/modify/{id}")
-    public String finEdit(@Valid BoardFormDto boardFormDto, BindingResult bindingResult, Model model){
-        if(bindingResult.hasErrors()){
-            return "modify";
-        }
+    public String finEdit(@Valid BoardFormDto boardFormDto, Model model){
         try {
             boardService.updateItem(boardFormDto);
         } catch (IllegalStateException e){
-            model.addAttribute("errorMessage", e.getMessage());
+            model.addAttribute("errorMessage", "오류입니당");
             return "modify";
         }
         return "redirect:/board";
