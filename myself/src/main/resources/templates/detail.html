@@ -30,12 +30,6 @@
                 alert(errorMessage);
             }
         });
-        function del() {
-            var chk = confirm("정말 삭제하시겠습니까?");
-            if (chk) {
-
-            }
-        }
     </script>
 </head>
 <body>
@@ -89,7 +83,6 @@
             <div th:if="${#authentication.name} == *{user.username}">
                 <a type="button" class="btn btn-primary" th:href="@{'/modify/'+${board.id}}">수정</a>
                 <a type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">삭제</a>
-<!--                <a type="button" class="btn btn-primary" onclick="del()">삭제</a>-->
             </div>
 
         </div>
@@ -112,8 +105,29 @@
                 </div>
             </div>
         </div>
+        <br>
     </form>
+    <div class="card mb-2">
+        <form th:action="@{'/newReply/'+${board.id}}" th:object="${replyFormDto}" method="post">
+            <input type="hidden" th:value="${board.id}" id="boardId">
+            <div class="card-body"><textarea id="reply-content" rows="2" class="form-control" th:field="*{content}"></textarea></div>
+            <div class="card-footer"><button type="submit" class="btn btn-primary">등록</button></div>
+        </form>
+    </div>
+    <div class="card mb-2">
+        <div class="card-header">댓글 리스트</div>
+        <ul id="reply-box" class="list-group">
+            <li th:each="reply : ${board.replys}"  class="list-group-item d-flex justify-content-between">
+                <div th:text="${reply.content}">john@example.com</div>
+                <div class="d-flex">
+                    <div>작성자 : <span th:text="${reply.user.username}"></span></div>
+                </div>
+            </li>
 
+
+        </ul>
+    </div>
+    <br> <br> <br>
 
 </div>
 </body>

@@ -1,9 +1,10 @@
 package com.myself.myself.service;
 
-import com.myself.myself.dto.BoardFormDto;
 import com.myself.myself.entity.Board;
+import com.myself.myself.entity.Reply;
 import com.myself.myself.entity.User;
 import com.myself.myself.repository.boardRepository;
+import com.myself.myself.repository.replyRepository;
 import com.myself.myself.repository.userRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 @RequiredArgsConstructor
-public class BoardService {
+public class ReplyService {
 
     @Autowired
     private boardRepository boardRepository;
@@ -21,24 +22,21 @@ public class BoardService {
     @Autowired
     private userRepository userRepository;
 
+    @Autowired
+    private replyRepository replyRepository;
 
     @Transactional
-    public Board saveBoard(String username,Board board){
+    public void replyWrite(String username, Long boardId, Reply requestReply){
+
         User user = userRepository.findByUsername(username);
-        board.setUser(user);
-        return boardRepository.save(board);
-    }
 
-    @Transactional
-    public Board updateItem(BoardFormDto boardFormDto){
-        Board board = boardRepository.findById(boardFormDto.getId()).orElseThrow(null);
-        board.updateBoard(boardFormDto);
-        return board;
-    }
+        Board board = boardRepository.findById(boardId).orElseThrow(()->{
+            return new IllegalArgumentException("댓글쓰기 실패");
+        });
+        requestReply.setUser(user);
+        requestReply.setBoard(board);
 
-    @Transactional
-    public void deleteItem(BoardFormDto boardFormDto){
-        Board board = boardRepository.findById(boardFormDto.getId()).orElseThrow(null);
-        boardRepository.delete(board);
+        replyRepository.save(requestReply);
+
     }
 }
