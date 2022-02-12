@@ -1,5 +1,7 @@
 package com.myself.myself.service;
 
+import com.myself.myself.dto.BoardFormDto;
+import com.myself.myself.dto.ReplyFormDto;
 import com.myself.myself.entity.Board;
 import com.myself.myself.entity.Reply;
 import com.myself.myself.entity.User;
@@ -38,5 +40,11 @@ public class ReplyService {
 
         replyRepository.save(requestReply);
 
+    }
+
+    @Transactional
+    public void deleteReply(ReplyFormDto replyFormDto){
+        Reply reply = replyRepository.findById(Math.toIntExact(replyFormDto.getId())).orElseThrow(null);
+        replyRepository.delete(reply);
     }
 }

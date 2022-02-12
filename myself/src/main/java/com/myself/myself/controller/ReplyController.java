@@ -47,4 +47,11 @@ public class ReplyController {
         }
         return "redirect:/board/{id}";
     }
+
+    @GetMapping("/deleteReply/{id}")
+    public String delReply(ReplyFormDto replyFormDto){
+        replyService.deleteReply(replyFormDto);
+        return "redirect:/board";
+
+    }
 }
